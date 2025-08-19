@@ -4,6 +4,7 @@ This project is a simple React application and styled with Material UI. It inclu
 
 - Login Page
 - Register Page
+- Reset Page
 - Successful Login Page
 
 ### Technologies Used
