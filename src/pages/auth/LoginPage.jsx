@@ -4,17 +4,19 @@ import AuthCard from "../../components/card/AuthCard";
 import CustomTextField from "../../components/input-field/CustomTextField";
 import CustomButton from "../../components/button/CustomButton";
 import LockOpenOutlinedIcon from "@mui/icons-material/LockOpenOutlined";
-import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined";
+import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
 import CustomAlert from "../../components/common/CustomAlert";
 import { Link, useNavigate } from "react-router-dom";
+import { validation } from "../../utils/validation";
 
 const LoginPage = () => {
   const navigate = useNavigate();
-  const [formData, setFormData] = useState({
-    name: "",
+  const initialvalue = {
+    email: "",
     password: "",
-  });
-  const [errors, setErrors] = useState({ name: "", password: "" });
+  };
+  const [formData, setFormData] = useState(initialvalue);
+  const [errors, setErrors] = useState({});
   const [severity, setSeverity] = useState("");
   const [alertMsg, setAlertMsg] = useState("");
   const [openAlert, setOpenAlert] = useState(false);
@@ -26,51 +28,26 @@ const LoginPage = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => {
-      return {
-        ...prev,
-        [name]: value,
-      };
-    });
+    setFormData({ ...formData, [name]: value });
   };
-
-  const validate = () => {
-    const newErrors = { name: "", password: "" };
-    const passwordRegex = /^.{6,}$/; // At least 6 characters
-
-    if (!formData.name) {
-      newErrors.name = "Name is required";
-    }
-    if (!passwordRegex.test(formData.password)) {
-      newErrors.password = "Password must be at least 6 characters";
-    }
-
-    setErrors(newErrors);
-    setSeverity("error");
-    setAlertMsg(newErrors.name || newErrors.password || "");
-    setOpenAlert(true);
-    return !newErrors.name && !newErrors.password;
-  };
-
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (validate()) {
-      console.log("Sign In successful:", formData);
+    const errors = validation(formData, "login");
+    setErrors(errors);
+    if (Object.keys(errors).length === 0) {
+      console.log("Login successful:", formData);
       setSeverity("success");
       setAlertMsg("Sign In successful");
       setOpenAlert(true);
-      resetForm();
+      setFormData(initialvalue);
       setTimeout(() => {
-        navigate("/login-success")
+        navigate("/login-success");
       }, 2000);
+    } else {
+      setSeverity("error");
+      setAlertMsg(errors.email || errors.password || "");
+      setOpenAlert(true);
     }
-  };
-
-  const resetForm = () => {
-    setFormData({
-      name: "",
-      password: "",
-    });
   };
 
   return (
@@ -85,15 +62,15 @@ const LoginPage = () => {
         <AuthCard title="Log In">
           <form onSubmit={handleSubmit}>
             <CustomTextField
-              id="name"
-              name="name"
-              type="name"
-              placeholder="Name"
+              id="email"
+              name="email"
+              type="email"
+              placeholder="Email"
               onChange={handleChange}
-              value={formData.name}
-              icon={PersonOutlineOutlinedIcon}
-              error={!!errors.name}
-              helperText={errors.name}
+              value={formData.email}
+              icon={EmailOutlinedIcon}
+              error={!!errors.email}
+              helperText={errors.email}
             />
             <CustomTextField
               id="password"
@@ -108,7 +85,14 @@ const LoginPage = () => {
             />
             <CustomButton type="submit" text="Sign In" />
           </form>
-          <Link style={{ color: "#ddd" }} to="/register">Sign Up</Link>
+          <Link style={{ color: "#ddd" }} to={"/register"}>
+            Don't have an account? Sign up
+          </Link>
+          <p>
+            <Link style={{ color: "#ddd" }} to={"/reset"}>
+              Forgot Password?
+            </Link>
+          </p>
         </AuthCard>
       </CustomBox>
     </>

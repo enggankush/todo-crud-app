@@ -21,7 +21,7 @@ const AuthCard = ({ title, children, bkColor = null }) => {
         gutterBottom
         sx={{
           color: "#fff",
-          marginBottom: 6,
+          marginBottom: 2,
           fontWeight: "bold",
         }}
       >

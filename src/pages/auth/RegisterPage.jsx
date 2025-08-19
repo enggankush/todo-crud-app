@@ -6,90 +6,82 @@ import AuthCard from "../../components/card/AuthCard";
 import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined";
 import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
 import LockOpenOutlinedIcon from "@mui/icons-material/LockOpenOutlined";
+import CalendarMonthOutlinedIcon from "@mui/icons-material/CalendarMonthOutlined";
+import LocalPhoneOutlinedIcon from "@mui/icons-material/LocalPhoneOutlined";
 import CustomAlert from "../../components/common/CustomAlert";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { validation } from "../../utils/validation";
 
 const RegisterPage = () => {
   const navigate = useNavigate();
-  const [formData, setFormData] = useState({
+
+  const initialvalue = {
     name: "",
+    dob: "",
+    mobile: "",
     email: "",
     password: "",
-  });
-  const [errors, setErrors] = useState({ name: "", email: "", password: "" });
+    confirm_password: "",
+  };
+
+  const [formData, setFormData] = useState(initialvalue);
+  const [errors, setErrors] = useState({});
   const [severity, setSeverity] = useState("");
-  const [alertMsg, setAlertMsg] = useState("")
-  const [openAlert, setOpenAlert] = useState(false)
+  const [alertMsg, setAlertMsg] = useState("");
+  const [openAlert, setOpenAlert] = useState(false);
 
   const handleAlertClose = (event, reason) => {
-    if (reason === 'clickaway') return;
+    if (reason === "clickaway") return;
     setOpenAlert(false);
   };
 
-
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => {
-      return {
-        ...prev,
-        [name]: value,
-      };
-    });
+    setFormData({ ...formData, [name]: value });
   };
 
-  const validate = () => {
-    const newErrors = { name: "", email: "", password: "" };
-    const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
-    const passwordRegex = /^.{6,}$/; // At least 6 characters
-    if (!formData.name) {
-      newErrors.name = "Name is required";
-    }
-
-    if (!emailRegex.test(formData.email)) {
-      newErrors.email = "Invalid email format";
-    }
-
-    if (!passwordRegex.test(formData.password)) {
-      newErrors.password = "Password must be at least 6 characters";
-    }
-
-    setErrors(newErrors);
-    setSeverity("error")
-    setAlertMsg(newErrors.name || newErrors.email || newErrors.password || "")
-    setOpenAlert(true)
-    return !newErrors.name && !newErrors.email && !newErrors.password;
-  };
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    const errors = validation(formData, "register");
+    setErrors(errors);
 
-    if (validate()) {
-      console.log("Registration successful:", formData);
-      setSeverity("success")
-      setAlertMsg("Sign Up successful")
-      setOpenAlert(true)
-      resetForm();
+    if (Object.keys(errors).length === 0) {
+      setSeverity("success");
+      console.log("Register is Succesfull", formData);
+      setAlertMsg("Sign Up successful");
+      setOpenAlert(true);
+      setFormData(initialvalue);
       setTimeout(() => {
         navigate("/login");
       }, 2000);
+    } else {
+      setSeverity("error");
+      setAlertMsg(
+        errors.name ||
+        errors.dob ||
+        errors.mobile ||
+        errors.email ||
+        errors.password ||
+        errors.confirm_password
+      );
+      setOpenAlert(true);
     }
   };
-  const resetForm = () => {
-    setFormData({
-      name: "",
-      email: "",
-      password: "",
-    })
-  }
-
   return (
     <>
-      <CustomAlert openAlert={openAlert} severity={severity} alertMsg={alertMsg} handleClose={handleAlertClose} />
+      <CustomAlert
+        openAlert={openAlert}
+        severity={severity}
+        alertMsg={alertMsg}
+        handleClose={handleAlertClose}
+      />
       <CustomBox>
         <AuthCard title="Create Account">
           <form onSubmit={handleSubmit}>
             <CustomTextField
               id="name"
               name="name"
+              type="text"
               placeholder="Name"
               icon={PersonOutlineOutlinedIcon}
               onChange={handleChange}
@@ -98,9 +90,31 @@ const RegisterPage = () => {
               helperText={errors.name}
             />
             <CustomTextField
+              id="dob"
+              name="dob"
+              // type="date"
+              placeholder="Date of Birth"
+              icon={CalendarMonthOutlinedIcon}
+              onChange={handleChange}
+              value={formData.dob}
+              error={!!errors.dob}
+              helperText={errors.dob}
+            />
+            <CustomTextField
+              id="mobile"
+              name="mobile"
+              type="number"
+              placeholder="Mobile Number"
+              icon={LocalPhoneOutlinedIcon}
+              onChange={handleChange}
+              value={formData.mobile}
+              error={!!errors.mobile}
+              helperText={errors.mobile}
+            />
+            <CustomTextField
               id="email"
               name="email"
-              type="text"
+              type="email"
               placeholder="Email"
               icon={EmailOutlinedIcon}
               onChange={handleChange}
@@ -119,8 +133,22 @@ const RegisterPage = () => {
               error={!!errors.password}
               helperText={errors.password}
             />
+            <CustomTextField
+              id="confirm_password"
+              name="confirm_password"
+              type="password"
+              placeholder="Confirm Password"
+              icon={LockOpenOutlinedIcon}
+              onChange={handleChange}
+              value={formData.confirm_password}
+              error={!!errors.confirm_password}
+              helperText={errors.confirm_password}
+            />
             <CustomButton type="submit" text="Sign Up" />
           </form>
+          <Link style={{ color: "#ddd" }} to="/">
+            Already have an account? Login
+          </Link>
         </AuthCard>
       </CustomBox>
     </>
