@@ -11,6 +11,7 @@ import LocalPhoneOutlinedIcon from "@mui/icons-material/LocalPhoneOutlined";
 import CustomAlert from "../../components/common/CustomAlert";
 import { Link, useNavigate } from "react-router-dom";
 import { validation } from "../../utils/validation";
+import { register } from "../../services/AuthService";
 
 const RegisterPage = () => {
   const navigate = useNavigate();
@@ -29,6 +30,7 @@ const RegisterPage = () => {
   const [severity, setSeverity] = useState("");
   const [alertMsg, setAlertMsg] = useState("");
   const [openAlert, setOpenAlert] = useState(false);
+  const [servermessage, setServermessage] = useState("");
 
   const handleAlertClose = (event, reason) => {
     if (reason === "clickaway") return;
@@ -44,19 +46,34 @@ const RegisterPage = () => {
     e.preventDefault();
     const errors = validation(formData, "register");
     setErrors(errors);
+    setServermessage("");
 
     if (Object.keys(errors).length === 0) {
-      setSeverity("success");
-      console.log("Register is Succesfull", formData);
-      setAlertMsg("Sign Up successful");
-      setOpenAlert(true);
-      setFormData(initialvalue);
-      setTimeout(() => {
-        navigate("/login");
-      }, 2000);
+      try {
+        const result = register(formData);
+        if (result?.status) {
+          setSeverity("success");
+          console.log("Register is Succesfull", formData);
+          setAlertMsg(result.msg || "Sign Up successful");
+          setOpenAlert(true);
+          setFormData(initialvalue);
+          setTimeout(() => {
+            navigate("/login");
+          }, 2000);
+        } else {
+          setSeverity("error");
+          setAlertMsg(result?.msg || "Registration failed. Try again.");
+          setOpenAlert(true);
+        }
+      } catch (error) {
+        setSeverity("error");
+        setAlertMsg("Server error. Please try again later.");
+        setOpenAlert(true);
+      }
     } else {
       setSeverity("error");
       setAlertMsg(
+        servermessage ||
         errors.name ||
         errors.dob ||
         errors.mobile ||

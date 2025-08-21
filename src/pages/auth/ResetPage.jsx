@@ -7,6 +7,7 @@ import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
 import CustomAlert from "../../components/common/CustomAlert";
 import { Link, useNavigate } from "react-router-dom";
 import { validation } from "../../utils/validation";
+import { reset } from "../../services/AuthService";
 
 const ResetPage = () => {
     const navigate = useNavigate();
@@ -32,17 +33,20 @@ const ResetPage = () => {
         const errors = validation(formData, "reset");
         setErrors(errors);
         if (Object.keys(errors).length === 0) {
-            setSeverity("success");
-            setAlertMsg("Reset successful");
-            setOpenAlert(true);
-            setFormData({ email: "", });
-            setTimeout(() => {
-                navigate("/login");
-            }, 2000);
-        } else {
-            setSeverity("error");
-            setAlertMsg(errors.email || "");
-            setOpenAlert(true);
+            const result = reset(formData);
+            if (result.status) {
+                setSeverity("success");
+                setAlertMsg(result.msg || "Reset successful");
+                setOpenAlert(true);
+                setFormData({ email: "", });
+                setTimeout(() => {
+                    navigate("/login");
+                }, 2000);
+            } else {
+                setSeverity("error");
+                setAlertMsg(result.msg || "Reset failed");
+                setOpenAlert(true);
+            }
         }
     };
 

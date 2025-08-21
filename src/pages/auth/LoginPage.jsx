@@ -8,6 +8,7 @@ import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
 import CustomAlert from "../../components/common/CustomAlert";
 import { Link, useNavigate } from "react-router-dom";
 import { validation } from "../../utils/validation";
+import { login } from "../../services/AuthService";
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -20,6 +21,7 @@ const LoginPage = () => {
   const [severity, setSeverity] = useState("");
   const [alertMsg, setAlertMsg] = useState("");
   const [openAlert, setOpenAlert] = useState(false);
+  const [servermessage, setServermessage] = useState("")
 
   const handleAlertClose = (event, reason) => {
     if (reason === "clickaway") return;
@@ -34,18 +36,36 @@ const LoginPage = () => {
     e.preventDefault();
     const errors = validation(formData, "login");
     setErrors(errors);
+    setServermessage("")
     if (Object.keys(errors).length === 0) {
-      console.log("Login successful:", formData);
-      setSeverity("success");
-      setAlertMsg("Sign In successful");
-      setOpenAlert(true);
-      setFormData(initialvalue);
-      setTimeout(() => {
-        navigate("/login-success");
-      }, 2000);
+      try {
+        const result = login(formData)
+        if (result?.status) {
+          setSeverity("success");
+          console.log("Login is successful", formData)
+          setAlertMsg(result.msg || "Sign In successful");
+          setOpenAlert(true);
+          setFormData(initialvalue);
+          setTimeout(() => {
+            navigate("/login-success");
+          }, 2000);
+        } else {
+          setSeverity("error");
+          setAlertMsg(result.msg || errors.email || errors.password || "");
+          setOpenAlert(true);
+        }
+      } catch (error) {
+        setSeverity("error");
+        setAlertMsg("Server error. Please try again later.");
+        setOpenAlert(true);
+      }
     } else {
       setSeverity("error");
-      setAlertMsg(errors.email || errors.password || "");
+      setAlertMsg(
+        servermessage ||
+        errors.email ||
+        errors.password
+      );
       setOpenAlert(true);
     }
   };
