@@ -5,6 +5,8 @@ import LoginSuccessPage from "./pages/auth/LoginSuccessPage";
 import ResetPage from "./pages/auth/ResetPage";
 import DashboardPage from "./admin/Dashboard";
 import Profile from "./admin/Profile";
+import ToDoPage from "./pages/todo/ToDopage";
+import TieTacGame from "./pages/game/TieTac";
 
 function App() {
   return (
@@ -18,6 +20,8 @@ function App() {
           <Route path="/login-success" element={<LoginSuccessPage />} />
           <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/todo" element={<ToDoPage />} />
+          <Route path="/game" element={<TieTacGame />} />
         </Routes>
       </BrowserRouter>
     </>

@@ -10,7 +10,7 @@ const CustomBox = ({ children }) => {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        backgroundImage: `url(${BgImg})`,
+        backgroundImage: BgImg ? `url(${BgImg})` : "none",
       }}
     >
       {children}

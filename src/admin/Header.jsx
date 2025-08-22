@@ -6,12 +6,21 @@ const Header = () => {
     const navigate = useNavigate();
     const user = JSON.parse(localStorage.getItem("currentUser")) || { name: "Guest", email: "" };
 
+    const userProfile = () => {
+        navigate("/profile")
+    }
+
     const handleLogout = () => {
         localStorage.removeItem("currentUser");
         navigate("/login");
     };
-    const userProfile = () => {
-        navigate("/profile")
+
+    const handleTodo = () =>{
+        navigate("/todo");
+    }
+
+    const handleGame = () =>{
+        navigate("/game");
     }
 
     return (
@@ -28,6 +37,8 @@ const Header = () => {
                     <Avatar sx={{ bgcolor: "orange", mr: 2 }} onClick={userProfile}>
                         {user.name ? user.name.charAt(0).toUpperCase() : "G"}
                     </Avatar>
+                    <Button color="inherit" onClick={handleTodo}>To-Do</Button>
+                    <Button color="inherit" onClick={handleGame}>Game</Button>
                     <Button color="inherit" onClick={handleLogout}>Logout</Button>
                 </Toolbar>
             </AppBar>
