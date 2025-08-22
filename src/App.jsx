@@ -3,8 +3,8 @@ import LoginPage from "./pages/auth/LoginPage";
 import RegisterPage from "./pages/auth/RegisterPage";
 import LoginSuccessPage from "./pages/auth/LoginSuccessPage";
 import ResetPage from "./pages/auth/ResetPage";
-import DashboardPage from "./admin/Dashboard";
-import Profile from "./admin/Profile";
+import DashboardPage from "./pages/users/Dashboard";
+import Profile from "./pages/users/Profile";
 import ToDoPage from "./pages/todo/ToDopage";
 import TieTacGame from "./pages/game/TieTac";
 
