@@ -8,7 +8,8 @@ import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
 import CustomAlert from "../../components/common/CustomAlert";
 import { Link, useNavigate } from "react-router-dom";
 import { validation } from "../../utils/validation";
-import { login } from "../../services/AuthService";
+// import { login } from "../../services/AuthService";
+import { loginUserService } from "../../api/api.service";
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -32,14 +33,16 @@ const LoginPage = () => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    const result = await loginUserService(formData);
+    console.log("data: ",result)
     const errors = validation(formData, "login");
     setErrors(errors);
     setServermessage("")
     if (Object.keys(errors).length === 0) {
       try {
-        const result = login(formData)
+        // const result = login(formData)
         if (result?.status) {
           setSeverity("success");
           console.log("Login is successful", formData)

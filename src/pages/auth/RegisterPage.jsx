@@ -11,7 +11,8 @@ import LocalPhoneOutlinedIcon from "@mui/icons-material/LocalPhoneOutlined";
 import CustomAlert from "../../components/common/CustomAlert";
 import { Link, useNavigate } from "react-router-dom";
 import { validation } from "../../utils/validation";
-import { register } from "../../services/AuthService";
+// import { register } from "../../services/AuthService";
+import { registerUserService } from "../../api/api.service";
 
 const RegisterPage = () => {
   const navigate = useNavigate();
@@ -44,13 +45,16 @@ const RegisterPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const result = await registerUserService(formData);
+    console.log("data: ",result)
+
     const errors = validation(formData, "register");
     setErrors(errors);
     setServermessage("");
 
     if (Object.keys(errors).length === 0) {
       try {
-        const result = register(formData);
+        // const result = register(formData);
         if (result?.status) {
           setSeverity("success");
           console.log("Register is Succesfull", formData);
