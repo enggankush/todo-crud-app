@@ -1,7 +1,12 @@
 import { Paper, Typography } from "@mui/material";
-import React from "react";
+import type { ReactNode } from "react";
 
-const AuthCard = ({ title, children, bkColor = null }) => {
+interface AuthCardProps {
+  title: string;
+  children: ReactNode;
+  bkColor?: string; // optional background color
+}
+const AuthCard: React.FC<AuthCardProps> = ({ title, children, bkColor }) => {
   return (
     <Paper
       sx={{

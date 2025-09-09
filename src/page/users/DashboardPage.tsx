@@ -1,11 +1,11 @@
 import { Box } from '@mui/material'
 import Header from '../../components/nav/Header'
 
-const Dashboard = () => {
+const DashboardPage = () => {
   return (
     <Box>{<Header />}</Box>
 
   )
 }
 
-export default Dashboard
+export default DashboardPage

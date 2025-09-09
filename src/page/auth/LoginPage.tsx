@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, type ChangeEvent, type FormEvent } from "react";
 import CustomBox from "../../components/box/CustomBox";
 import AuthCard from "../../components/card/AuthCard";
 import CustomTextField from "../../components/input-field/CustomTextField";
@@ -7,65 +7,61 @@ import LockOpenOutlinedIcon from "@mui/icons-material/LockOpenOutlined";
 import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
 import CustomAlert from "../../components/common/CustomAlert";
 import { Link, useNavigate } from "react-router-dom";
-import { validation } from "../../utils/validation";
-import { login } from "../../services/AuthService";
+import { loginUserService } from "../../api/api.service";
+
+interface LoginForm {
+  email: string;
+  password: string;
+}
 
 const LoginPage = () => {
   const navigate = useNavigate();
-  const initialvalue = {
-    email: "",
-    password: "",
-  };
-  const [formData, setFormData] = useState(initialvalue);
-  const [errors, setErrors] = useState({});
-  const [severity, setSeverity] = useState("");
+
+  const initialValue: LoginForm = { email: "", password: "" };
+
+  const [formData, setFormData] = useState<LoginForm>(initialValue);
+  const [severity, setSeverity] = useState<"success" | "error" | "">("");
   const [alertMsg, setAlertMsg] = useState("");
   const [openAlert, setOpenAlert] = useState(false);
-  const [servermessage, setServermessage] = useState("")
 
-  const handleAlertClose = (event, reason) => {
+  const handleAlertClose = (
+    event?: React.SyntheticEvent | Event,
+    reason?: string
+  ) => {
     if (reason === "clickaway") return;
     setOpenAlert(false);
   };
 
-  const handleChange = (e) => {
+  const handleChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
-  const handleSubmit = (e) => {
+
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const errors = validation(formData, "login");
-    setErrors(errors);
-    setServermessage("")
-    if (Object.keys(errors).length === 0) {
-      try {
-        const result = login(formData)
-        if (result?.status) {
-          setSeverity("success");
-          console.log("Login is successful", formData)
-          setAlertMsg(result.msg || "Sign In successful");
-          setOpenAlert(true);
-          setFormData(initialvalue);
-          setTimeout(() => {
-            navigate("/login-success");
-          }, 2000);
-        } else {
-          setSeverity("error");
-          setAlertMsg(result.msg || errors.email || errors.password || "");
-          setOpenAlert(true);
-        }
-      } catch (error) {
+    try {
+      const result = await loginUserService(formData);
+      console.log("data: ", result);
+
+      if (result?.status) {
+        setSeverity("success");
+        setAlertMsg(result.msg || "Sign In successful");
+        setOpenAlert(true);
+        setFormData(initialValue);
+
+        setTimeout(() => {
+          navigate("/login-success");
+        }, 2000);
+      } else {
         setSeverity("error");
-        setAlertMsg("Server error. Please try again later.");
+        setAlertMsg(result.msg || "Invalid email or password");
         setOpenAlert(true);
       }
-    } else {
+    } catch (error) {
       setSeverity("error");
-      setAlertMsg(
-        servermessage ||
-        errors.email ||
-        errors.password
-      );
+      setAlertMsg("Server error. Please try again later.");
       setOpenAlert(true);
     }
   };
@@ -89,8 +85,6 @@ const LoginPage = () => {
               onChange={handleChange}
               value={formData.email}
               icon={EmailOutlinedIcon}
-              error={!!errors.email}
-              helperText={errors.email}
             />
             <CustomTextField
               id="password"
@@ -100,8 +94,6 @@ const LoginPage = () => {
               onChange={handleChange}
               value={formData.password}
               icon={LockOpenOutlinedIcon}
-              error={!!errors.password}
-              helperText={errors.password}
             />
             <CustomButton type="submit" text="Sign In" />
           </form>

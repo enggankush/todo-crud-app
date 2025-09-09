@@ -1,5 +1,4 @@
-import { useState } from "react";
-import CustomBox from "../../components/box/CustomBox";
+import { useState, type ChangeEvent, type FormEvent } from "react";
 import CustomTextField from "../../components/input-field/CustomTextField";
 import CustomButton from "../../components/button/CustomButton";
 import AuthCard from "../../components/card/AuthCard";
@@ -10,13 +9,33 @@ import CalendarMonthOutlinedIcon from "@mui/icons-material/CalendarMonthOutlined
 import LocalPhoneOutlinedIcon from "@mui/icons-material/LocalPhoneOutlined";
 import CustomAlert from "../../components/common/CustomAlert";
 import { Link, useNavigate } from "react-router-dom";
-import { validation } from "../../utils/validation";
-import { register } from "../../services/AuthService";
+import CustomBox from "../../components/box/CustomBox";
+import { registerUserService } from "../../api/api.service";
 
-const RegisterPage = () => {
+// import { validation } from "../../utils/validation";
+
+interface RegisterForm {
+  name: string;
+  dob: string;
+  mobile: string;
+  email: string;
+  password: string;
+  confirm_password: string;
+}
+
+interface ValidationErrors {
+  [key: string]: string; 
+}
+
+interface ApiResponse {
+  status: boolean;
+  msg?: string;
+}
+
+const RegisterPage: React.FC = () => {
   const navigate = useNavigate();
 
-  const initialvalue = {
+  const initialvalue: RegisterForm = {
     name: "",
     dob: "",
     mobile: "",
@@ -25,38 +44,47 @@ const RegisterPage = () => {
     confirm_password: "",
   };
 
-  const [formData, setFormData] = useState(initialvalue);
-  const [errors, setErrors] = useState({});
-  const [severity, setSeverity] = useState("");
-  const [alertMsg, setAlertMsg] = useState("");
-  const [openAlert, setOpenAlert] = useState(false);
-  const [servermessage, setServermessage] = useState("");
+  const [formData, setFormData] = useState<RegisterForm>(initialvalue);
+  const [errors, setErrors] = useState<ValidationErrors>({});
+  const [severity, setSeverity] = useState<
+    "success" | "error" | "info" | "warning" | ""
+  >("");
+  const [alertMsg, setAlertMsg] = useState<string>("");
+  const [openAlert, setOpenAlert] = useState<boolean>(false);
+  const [servermessage, setServermessage] = useState<string>("");
 
-  const handleAlertClose = (event, reason) => {
+  const handleAlertClose = (
+    _event?: React.SyntheticEvent | Event,
+    reason?: string
+  ) => {
     if (reason === "clickaway") return;
     setOpenAlert(false);
   };
 
-  const handleChange = (e) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const errors = validation(formData, "register");
-    setErrors(errors);
-    setServermessage("");
+
+    // const errors = validation(formData, "register") as ValidationErrors;
+    // setErrors(errors);
+    // setServermessage("");
 
     if (Object.keys(errors).length === 0) {
       try {
-        const result = register(formData);
+        const result: ApiResponse = await registerUserService(formData);
+        console.log("data: ", result);
+
         if (result?.status) {
           setSeverity("success");
-          console.log("Register is Succesfull", formData);
+          console.log("Register is Successful", formData);
           setAlertMsg(result.msg || "Sign Up successful");
           setOpenAlert(true);
           setFormData(initialvalue);
+
           setTimeout(() => {
             navigate("/login");
           }, 2000);
@@ -74,24 +102,26 @@ const RegisterPage = () => {
       setSeverity("error");
       setAlertMsg(
         servermessage ||
-        errors.name ||
-        errors.dob ||
-        errors.mobile ||
-        errors.email ||
-        errors.password ||
-        errors.confirm_password
+          errors.name ||
+          errors.dob ||
+          errors.mobile ||
+          errors.email ||
+          errors.password ||
+          errors.confirm_password
       );
       setOpenAlert(true);
     }
   };
+
   return (
     <>
       <CustomAlert
         openAlert={openAlert}
-        severity={severity}
+        severity={severity || "error"}
         alertMsg={alertMsg}
         handleClose={handleAlertClose}
       />
+
       <CustomBox>
         <AuthCard title="Create Account">
           <form onSubmit={handleSubmit}>
@@ -109,7 +139,6 @@ const RegisterPage = () => {
             <CustomTextField
               id="dob"
               name="dob"
-              // type="date"
               placeholder="Date of Birth"
               icon={CalendarMonthOutlinedIcon}
               onChange={handleChange}
@@ -163,6 +192,7 @@ const RegisterPage = () => {
             />
             <CustomButton type="submit" text="Sign Up" />
           </form>
+
           <Link style={{ color: "#ddd" }} to="/">
             Already have an account? Login
           </Link>
