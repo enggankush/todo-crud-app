@@ -8,6 +8,7 @@ import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
 import CustomAlert from "../../components/common/CustomAlert";
 import { Link, useNavigate } from "react-router-dom";
 import { loginUserService } from "../../api/api.service";
+import type { AlertColor } from "@mui/material";
 
 interface LoginForm {
   email: string;
@@ -20,12 +21,12 @@ const LoginPage = () => {
   const initialValue: LoginForm = { email: "", password: "" };
 
   const [formData, setFormData] = useState<LoginForm>(initialValue);
-  const [severity, setSeverity] = useState<"success" | "error" | "">("");
+  const [severity, setSeverity] = useState<AlertColor>("info");
   const [alertMsg, setAlertMsg] = useState("");
   const [openAlert, setOpenAlert] = useState(false);
 
   const handleAlertClose = (
-    event?: React.SyntheticEvent | Event,
+    _event?: React.SyntheticEvent | Event,
     reason?: string
   ) => {
     if (reason === "clickaway") return;
