@@ -2,57 +2,81 @@ import {
   AppBar,
   Avatar,
   Box,
-  Button,
   IconButton,
+  Menu,
+  MenuItem,
   Toolbar,
   Typography,
 } from "@mui/material";
-import MenuIcon from "@mui/icons-material/Menu";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+
+interface User {
+  name: string;
+  email: string;
+}
 
 const Header: React.FC = () => {
   const navigate = useNavigate();
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
   // ✅ Get user from localStorage with type check
   const storedUser = localStorage.getItem("currentUser");
   const user: User | null = storedUser ? JSON.parse(storedUser) : null;
 
-  const userProfile = () => {
+  const handleOpenMenu = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleCloseMenu = () => {
+    setAnchorEl(null);
+  };
+
+  // ✅ Navigation handlers
+  const goToProfile = () => {
+    handleCloseMenu();
     navigate("/profile");
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem("currentUser");
+  const logoutProfile = () => {
+    handleCloseMenu();
+    localStorage.removeItem("currentUser"); // ✅ clear login if needed
     navigate("/login");
-  };
-
-  const handletodo = () => {
-    navigate("/todo");
   };
 
   return (
     <Box>
-      <AppBar position="static" sx={{ backgroundColor: "#1976d2" }}>
-        <Toolbar>
-          <IconButton edge="start" color="inherit" aria-label="menu">
-            <MenuIcon />
-          </IconButton>
-
+      <AppBar position="static" sx={{ backgroundColor: "rgb(255 255 255)" }}>
+        <Toolbar sx={{ color: "#666666" }}>
           <Typography variant="h6" sx={{ flexGrow: 1 }}>
-            My Dashboard
+            My To-Do
           </Typography>
 
-          {/* ✅ Safe check for user */}
-          <Avatar sx={{ bgcolor: "orange", mr: 2 }} onClick={userProfile}>
-            {user?.name ? user.name.charAt(0).toUpperCase() : "G"}
-          </Avatar>
+          {/* Profile Avatar */}
+          <IconButton onClick={handleOpenMenu} size="large">
+            <Avatar sx={{ bgcolor: "orange" }}>
+              {user?.name ? user.name.charAt(0).toUpperCase() : "G"}
+            </Avatar>
+          </IconButton>
 
-          <Button color="inherit" onClick={handletodo}>
-            To-Do
-          </Button>
-          <Button color="inherit" onClick={handleLogout}>
-            Logout
-          </Button>
+          {/* Menu */}
+          <Menu
+            anchorEl={anchorEl}
+            open={Boolean(anchorEl)}
+            onClose={handleCloseMenu}
+          >
+            <MenuItem sx={{ color: "#666666" }} onClick={goToProfile}>
+              Profile
+            </MenuItem>
+            <hr />
+            <MenuItem sx={{ color: "#666666" }} onClick={handleCloseMenu}>
+              Settings
+            </MenuItem>
+            <hr />
+            <MenuItem sx={{ color: "#666666" }} onClick={logoutProfile}>
+              Logout
+            </MenuItem>
+          </Menu>
         </Toolbar>
       </AppBar>
     </Box>
@@ -60,8 +84,3 @@ const Header: React.FC = () => {
 };
 
 export default Header;
-
-interface User {
-  name: string;
-  email: string;
-}
