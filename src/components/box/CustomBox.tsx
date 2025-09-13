@@ -2,10 +2,6 @@ import { Box } from "@mui/material";
 import BgImg from "../../assets/images/bg-img.jpg";
 import type { ReactNode } from "react";
 
-interface CustomBoxProps {
-  children: ReactNode;
-}
-
 const CustomBox: React.FC<CustomBoxProps> = ({ children }) => {
   return (
     <Box
@@ -24,3 +20,7 @@ const CustomBox: React.FC<CustomBoxProps> = ({ children }) => {
 };
 
 export default CustomBox;
+
+interface CustomBoxProps {
+  children: ReactNode;
+}

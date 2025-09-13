@@ -1,4 +1,4 @@
-import axios, { AxiosError } from "axios";
+import axios, { AxiosError, type Method } from "axios";
 
 const API = "http://localhost:5000/api";
 
@@ -16,44 +16,55 @@ export interface LoginData {
   password: string;
 }
 
-// define return type
 export interface ApiResponse<T = any> {
-  status: boolean;
-  data?: T;
-  msg?: string;
+  success: boolean;
+  data: T;
+  msg: string;
 }
 
-// Register API service (TS)
-export const registerUserService = async (
-  data: RegisterData
-): Promise<ApiResponse> => {
+type ApiType = {
+  url: string;
+  method: Method;
+  data?: any;
+  token?: string;
+};
+
+const api = async (pl: ApiType) => {
   try {
-    const res = await axios.post(`${API}/auth/register`, data);
-    return { status: true, data: res.data };
+    const { url, method, data, token } = pl;
+    const res = await axios({
+      method,
+      url: API + url,
+      data,
+      headers: {
+        Authorization: token ? `Bearer ${token}` : undefined,
+      },
+    });
+
+    return res.data
   } catch (error) {
     const err = error as AxiosError<any>;
-    console.log({ err });
+    console.log("API Error : ", { err });
 
     const e = err.response?.data?.errors ?? err.response?.data?.msg;
     const msg = typeof e === "string" ? e : e?.length ? e[0]?.msg : null;
 
-    return { status: false, msg: msg ?? "Something went wrong" };
+    return { success: false, data: null, msg: msg ?? "Something went wrong" };
   }
+};
+
+export const registerUserService = async (
+  data: RegisterData
+): Promise<ApiResponse> => {
+  return api({ url: `/auth/register`, method: "post", data });
 };
 
 export const loginUserService = async (
   data: LoginData
 ): Promise<ApiResponse> => {
-  try {
-    const res = await axios.post(`${API}/auth/login`, data);
-    return { status: true, data: res.data };
-  } catch (error) {
-    const err = error as AxiosError<any>;
-    console.log({ err });
+  return api({ url: `/auth/login`, method: "post", data });
+};
 
-    const e = err.response?.data?.errors ?? err.response?.data?.msg;
-    const msg = typeof e === "string" ? e : e?.length ? e[0]?.msg : null;
-
-    return { status: false, msg: msg ?? "Something went wrong" };
-  }
+export const userProfileService = (token: string): Promise<ApiResponse> => {
+  return api({ url: `/users`, method: "get", token });
 };

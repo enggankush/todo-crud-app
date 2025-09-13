@@ -1,6 +1,6 @@
 import {
   AppBar,
-//   Avatar,
+  Avatar,
   Box,
   Button,
   IconButton,
@@ -10,22 +10,16 @@ import {
 import MenuIcon from "@mui/icons-material/Menu";
 import { useNavigate } from "react-router-dom";
 
-// ✅ Define User type
-// interface User {
-//   name: string;
-//   email: string;
-// }
-
 const Header: React.FC = () => {
   const navigate = useNavigate();
 
   // ✅ Get user from localStorage with type check
-//   const storedUser = localStorage.getItem("currentUser");
-//   const user: User | null = storedUser ? JSON.parse(storedUser) : null;
+  const storedUser = localStorage.getItem("currentUser");
+  const user: User | null = storedUser ? JSON.parse(storedUser) : null;
 
-//   const userProfile = () => {
-//     navigate("/profile");
-//   };
+  const userProfile = () => {
+    navigate("/profile");
+  };
 
   const handleLogout = () => {
     localStorage.removeItem("currentUser");
@@ -34,9 +28,6 @@ const Header: React.FC = () => {
 
   const handletodo = () => {
     navigate("/todo");
-  };
-  const handleGame = () => {
-    navigate("/game");
   };
 
   return (
@@ -52,13 +43,10 @@ const Header: React.FC = () => {
           </Typography>
 
           {/* ✅ Safe check for user */}
-          {/* <Avatar sx={{ bgcolor: "orange", mr: 2 }} onClick={userProfile}>
+          <Avatar sx={{ bgcolor: "orange", mr: 2 }} onClick={userProfile}>
             {user?.name ? user.name.charAt(0).toUpperCase() : "G"}
-          </Avatar> */}
+          </Avatar>
 
-          <Button color="inherit" onClick={handleGame}>
-            Game
-          </Button>
           <Button color="inherit" onClick={handletodo}>
             To-Do
           </Button>
@@ -72,3 +60,8 @@ const Header: React.FC = () => {
 };
 
 export default Header;
+
+interface User {
+  name: string;
+  email: string;
+}

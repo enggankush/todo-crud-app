@@ -1,40 +1,22 @@
 import { useState, type ChangeEvent, type FormEvent } from "react";
+import {
+  LocalPhoneOutlined,
+  CalendarMonthOutlined,
+  LockOpenOutlined,
+  PersonOutlineOutlined,
+  EmailOutlined,
+} from "@mui/icons-material";
 import CustomTextField from "../../components/input-field/CustomTextField";
 import CustomButton from "../../components/button/CustomButton";
 import AuthCard from "../../components/card/AuthCard";
-import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined";
-import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
-import LockOpenOutlinedIcon from "@mui/icons-material/LockOpenOutlined";
-import CalendarMonthOutlinedIcon from "@mui/icons-material/CalendarMonthOutlined";
-import LocalPhoneOutlinedIcon from "@mui/icons-material/LocalPhoneOutlined";
 import CustomAlert from "../../components/common/CustomAlert";
 import { Link, useNavigate } from "react-router-dom";
 import CustomBox from "../../components/box/CustomBox";
 import { registerUserService } from "../../api/api.service";
-
-// import { validation } from "../../utils/validation";
-
-interface RegisterForm {
-  name: string;
-  dob: string;
-  mobile: string;
-  email: string;
-  password: string;
-  confirm_password: string;
-}
-
-interface ValidationErrors {
-  [key: string]: string; 
-}
-
-interface ApiResponse {
-  status: boolean;
-  msg?: string;
-}
+import { validation } from "../../utils/validation";
 
 const RegisterPage: React.FC = () => {
   const navigate = useNavigate();
-
   const initialvalue: RegisterForm = {
     name: "",
     dob: "",
@@ -45,13 +27,12 @@ const RegisterPage: React.FC = () => {
   };
 
   const [formData, setFormData] = useState<RegisterForm>(initialvalue);
-  const [errors, setErrors] = useState<ValidationErrors>({});
-  const [severity, setSeverity] = useState<
-    "success" | "error" | "info" | "warning" | ""
-  >("");
   const [alertMsg, setAlertMsg] = useState<string>("");
   const [openAlert, setOpenAlert] = useState<boolean>(false);
   const [servermessage, setServermessage] = useState<string>("");
+  const [severity, setSeverity] = useState<
+    "success" | "error" | "info" | "warning" | ""
+  >("");
 
   const handleAlertClose = (
     _event?: React.SyntheticEvent | Event,
@@ -68,17 +49,15 @@ const RegisterPage: React.FC = () => {
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
-    // const errors = validation(formData, "register") as ValidationErrors;
-    // setErrors(errors);
-    // setServermessage("");
+    const errors = validation(formData, "register") as ValidationErrors;
+    setServermessage("");
 
     if (Object.keys(errors).length === 0) {
       try {
         const result: ApiResponse = await registerUserService(formData);
         console.log("data: ", result);
 
-        if (result?.status) {
+        if (result.success) {
           setSeverity("success");
           console.log("Register is Successful", formData);
           setAlertMsg(result.msg || "Sign Up successful");
@@ -130,65 +109,53 @@ const RegisterPage: React.FC = () => {
               name="name"
               type="text"
               placeholder="Name"
-              icon={PersonOutlineOutlinedIcon}
+              icon={PersonOutlineOutlined}
               onChange={handleChange}
               value={formData.name}
-              error={!!errors.name}
-              helperText={errors.name}
             />
             <CustomTextField
               id="dob"
               name="dob"
               placeholder="Date of Birth"
-              icon={CalendarMonthOutlinedIcon}
+              icon={CalendarMonthOutlined}
               onChange={handleChange}
               value={formData.dob}
-              error={!!errors.dob}
-              helperText={errors.dob}
             />
             <CustomTextField
               id="mobile"
               name="mobile"
               type="number"
               placeholder="Mobile Number"
-              icon={LocalPhoneOutlinedIcon}
+              icon={LocalPhoneOutlined}
               onChange={handleChange}
               value={formData.mobile}
-              error={!!errors.mobile}
-              helperText={errors.mobile}
             />
             <CustomTextField
               id="email"
               name="email"
               type="email"
               placeholder="Email"
-              icon={EmailOutlinedIcon}
+              icon={EmailOutlined}
               onChange={handleChange}
               value={formData.email}
-              error={!!errors.email}
-              helperText={errors.email}
             />
             <CustomTextField
               id="password"
               name="password"
               type="password"
               placeholder="Password"
-              icon={LockOpenOutlinedIcon}
+              icon={LockOpenOutlined}
               onChange={handleChange}
               value={formData.password}
-              error={!!errors.password}
-              helperText={errors.password}
             />
             <CustomTextField
               id="confirm_password"
               name="confirm_password"
               type="password"
               placeholder="Confirm Password"
-              icon={LockOpenOutlinedIcon}
+              icon={LockOpenOutlined}
               onChange={handleChange}
               value={formData.confirm_password}
-              error={!!errors.confirm_password}
-              helperText={errors.confirm_password}
             />
             <CustomButton type="submit" text="Sign Up" />
           </form>
@@ -203,3 +170,21 @@ const RegisterPage: React.FC = () => {
 };
 
 export default RegisterPage;
+
+interface RegisterForm {
+  name: string;
+  dob: string;
+  mobile: string;
+  email: string;
+  password: string;
+  confirm_password: string;
+}
+
+interface ValidationErrors {
+  [key: string]: string;
+}
+
+interface ApiResponse {
+  status: boolean;
+  msg?: string;
+}

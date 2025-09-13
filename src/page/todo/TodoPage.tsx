@@ -1,7 +1,6 @@
 import { Box, Button, TextField, Checkbox } from "@mui/material";
+import { EditOutlined, DeleteOutlineOutlined } from "@mui/icons-material";
 import AuthCard from "../../components/card/AuthCard";
-import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
-import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import { useState, type ChangeEvent, type FormEvent } from "react";
 
 const ToDoPage: React.FC = () => {
@@ -94,10 +93,10 @@ const ToDoPage: React.FC = () => {
               </Box>
               <Box>
                 <Button onClick={() => handleEdit(index)} type="button">
-                  <EditOutlinedIcon sx={{ color: "#00b0ff" }} />
+                  <EditOutlined sx={{ color: "#00b0ff" }} />
                 </Button>
                 <Button onClick={() => handleDelete(index)} type="button">
-                  <DeleteOutlineOutlinedIcon sx={{ color: "#ff5252" }} />
+                  <DeleteOutlineOutlined sx={{ color: "#ff5252" }} />
                 </Button>
               </Box>
             </Box>

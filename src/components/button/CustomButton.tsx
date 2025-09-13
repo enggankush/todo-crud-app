@@ -1,10 +1,5 @@
 import { Button } from "@mui/material";
 
-interface CustomButtonProps {
-  text: string;
-  type: "button" | "submit";
-  onClick?: () => void;
-}
 const CustomButton: React.FC<CustomButtonProps> = ({
   text,
   type = "button",
@@ -32,3 +27,9 @@ const CustomButton: React.FC<CustomButtonProps> = ({
 };
 
 export default CustomButton;
+
+interface CustomButtonProps {
+  text: string;
+  type: "button" | "submit";
+  onClick?: () => void;
+}

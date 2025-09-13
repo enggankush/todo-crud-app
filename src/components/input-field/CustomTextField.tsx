@@ -1,18 +1,7 @@
 import { InputAdornment, TextField, type TextFieldProps } from "@mui/material";
-import  { type OverridableComponent } from "@mui/types";
+import { type OverridableComponent } from "@mui/types";
 import { type SvgIconTypeMap } from "@mui/material/SvgIcon";
 import React from "react";
-
-interface CustomTextFieldProps extends Omit<TextFieldProps, "variant"> {
-  id: string;
-  name: string;
-  type?: string;
-  placeholder?: string;
-  value?: string | number;
-  icon?: OverridableComponent<SvgIconTypeMap<{}, "svg">>; // for MUI icons
-  error?: boolean;
-  helperText?: string;
-}
 
 const CustomTextField: React.FC<CustomTextFieldProps> = ({
   id,
@@ -59,3 +48,14 @@ const CustomTextField: React.FC<CustomTextFieldProps> = ({
 };
 
 export default CustomTextField;
+
+interface CustomTextFieldProps extends Omit<TextFieldProps, "variant"> {
+  id: string;
+  name: string;
+  type?: string;
+  placeholder?: string;
+  value?: string | number;
+  icon?: OverridableComponent<SvgIconTypeMap<{}, "svg">>; // for MUI icons
+  error?: boolean;
+  helperText?: string;
+}

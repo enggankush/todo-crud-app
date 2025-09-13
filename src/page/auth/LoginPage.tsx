@@ -1,29 +1,24 @@
 import { useState, type ChangeEvent, type FormEvent } from "react";
+import { EmailOutlined, LockOpenOutlined } from "@mui/icons-material";
 import CustomBox from "../../components/box/CustomBox";
 import AuthCard from "../../components/card/AuthCard";
 import CustomTextField from "../../components/input-field/CustomTextField";
 import CustomButton from "../../components/button/CustomButton";
-import LockOpenOutlinedIcon from "@mui/icons-material/LockOpenOutlined";
-import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
 import CustomAlert from "../../components/common/CustomAlert";
 import { Link, useNavigate } from "react-router-dom";
-import { loginUserService } from "../../api/api.service";
+import { loginUserService, type ApiResponse } from "../../api/api.service";
 import type { AlertColor } from "@mui/material";
-
-interface LoginForm {
-  email: string;
-  password: string;
-}
+import { validation } from "../../utils/validation";
 
 const LoginPage = () => {
   const navigate = useNavigate();
 
   const initialValue: LoginForm = { email: "", password: "" };
-
   const [formData, setFormData] = useState<LoginForm>(initialValue);
   const [severity, setSeverity] = useState<AlertColor>("info");
   const [alertMsg, setAlertMsg] = useState("");
   const [openAlert, setOpenAlert] = useState(false);
+  const [servermessage, setServermessage] = useState<string>("");
 
   const handleAlertClose = (
     _event?: React.SyntheticEvent | Event,
@@ -40,29 +35,45 @@ const LoginPage = () => {
     setFormData({ ...formData, [name]: value });
   };
 
+  // --- Handle Form Submit ---
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    try {
-      const result = await loginUserService(formData);
-      console.log("data: ", result);
 
-      if (result?.status) {
-        setSeverity("success");
-        setAlertMsg(result.msg || "Sign In successful");
-        setOpenAlert(true);
-        setFormData(initialValue);
+    const errors = validation(formData, "login") as ValidationErrors;
+    console.log(errors);
+    setServermessage("");
+    if (Object.keys(errors).length === 0) {
+      try {
+        const result: ApiResponse<string> = await loginUserService(formData);
 
-        setTimeout(() => {
-          navigate("/login-success");
-        }, 2000);
-      } else {
+        if (result.success) {
+          localStorage.setItem("token", result.data);
+
+          setSeverity("success");
+          setAlertMsg(result.msg || "Sign In successful");
+          setOpenAlert(true);
+          setFormData(initialValue);
+
+          setTimeout(() => {
+            navigate("/login-success");
+          }, 2000);
+        } else {
+          setSeverity("error");
+          setAlertMsg(result.msg || "Invalid email or password");
+          setOpenAlert(true);
+        }
+      } catch (error) {
         setSeverity("error");
-        setAlertMsg(result.msg || "Invalid email or password");
+        setAlertMsg("Server error. Please try again later.");
         setOpenAlert(true);
       }
-    } catch (error) {
+    } else {
       setSeverity("error");
-      setAlertMsg("Server error. Please try again later.");
+      setAlertMsg(
+        servermessage ||
+        errors.email ||
+        errors.password
+      );
       setOpenAlert(true);
     }
   };
@@ -85,7 +96,7 @@ const LoginPage = () => {
               placeholder="Email"
               onChange={handleChange}
               value={formData.email}
-              icon={EmailOutlinedIcon}
+              icon={EmailOutlined}
             />
             <CustomTextField
               id="password"
@@ -94,15 +105,15 @@ const LoginPage = () => {
               placeholder="Password"
               onChange={handleChange}
               value={formData.password}
-              icon={LockOpenOutlinedIcon}
+              icon={LockOpenOutlined}
             />
             <CustomButton type="submit" text="Sign In" />
           </form>
-          <Link style={{ color: "#ddd" }} to={"/register"}>
+          <Link style={{ color: "#ddd" }} to="/register">
             Don't have an account? Sign up
           </Link>
           <p>
-            <Link style={{ color: "#ddd" }} to={"/reset"}>
+            <Link style={{ color: "#ddd" }} to="/reset">
               Forgot Password?
             </Link>
           </p>
@@ -113,3 +124,12 @@ const LoginPage = () => {
 };
 
 export default LoginPage;
+
+interface ValidationErrors {
+  [key: string]: string;
+}
+
+interface LoginForm {
+  email: string;
+  password: string;
+}

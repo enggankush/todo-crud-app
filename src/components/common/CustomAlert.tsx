@@ -2,13 +2,6 @@ import Snackbar from "@mui/material/Snackbar";
 import Alert, { type AlertColor } from "@mui/material/Alert";
 import type { SyntheticEvent } from "react";
 
-interface CustomAlertProps {
-  openAlert: boolean;
-  severity: AlertColor;
-  alertMsg: string;
-  handleClose: (event?: SyntheticEvent | Event, reason?: string) => void;
-}
-
 const CustomAlert: React.FC<CustomAlertProps> = ({
   openAlert,
   severity,
@@ -35,4 +28,12 @@ const CustomAlert: React.FC<CustomAlertProps> = ({
     </div>
   );
 };
+
 export default CustomAlert;
+
+interface CustomAlertProps {
+  openAlert: boolean;
+  severity: AlertColor;
+  alertMsg: string;
+  handleClose: (event?: SyntheticEvent | Event, reason?: string) => void;
+}
