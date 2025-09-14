@@ -54,17 +54,17 @@ const LoginPage = () => {
         const result: ApiResponse<string> = await loginUserService(formData);
 
         if (result.success) {
-          localStorage.setItem("token", result.data);
-          userProfileService();
-
           setSeverity("success");
-          setAlertMsg(result.msg || "Sign In successful");
+          setAlertMsg(result.msg || "Sign Up successful");
           setOpenAlert(true);
           setFormData(initialValue);
 
+          userProfileService(result.data);
+          
           setTimeout(() => {
+          localStorage.setItem("token", result.data)
             navigate("/dashboard");
-          }, 2000);
+          }, 1000);
         } else {
           setSeverity("error");
           setAlertMsg(result.msg || "Invalid email or password");
@@ -77,7 +77,7 @@ const LoginPage = () => {
       }
     } else {
       setSeverity("error");
-      setAlertMsg(servermessage || errors.email || errors.password);
+      setAlertMsg(servermessage || errors.email || errors.password || "Please fill required field");
       setOpenAlert(true);
     }
   };

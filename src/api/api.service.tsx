@@ -67,8 +67,8 @@ export const loginUserService = async (
   return api({ url: `/auth/login`, method: "post", data });
 };
 
-export const userProfileService = async () => {
-  const token = localStorage.getItem("token") as string;
+export const userProfileService = async (t?: string) => {
+  const token = t ?? localStorage.getItem("token") as string;
   const res = await api({ url: `/users`, method: "get", token });
   if (res.success && res.data) {
     localStorage.setItem("currentUser", JSON.stringify(res.data));
