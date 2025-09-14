@@ -4,9 +4,9 @@ import { useEffect, useState } from "react";
 import { getUser, isLoggedIn } from "../../api/api.service";
 import { Navigate } from "react-router-dom";
 
-const ProfilePage: React.FC = () => {
-  if (!isLoggedIn) {
-    return <Navigate to="/login" />;
+const SettingPage: React.FC = () => {
+  if (!isLoggedIn()) {
+    return <Navigate to="/setting" />;
   }
 
   const [user, setUser] = useState<User>({
@@ -32,22 +32,8 @@ const ProfilePage: React.FC = () => {
             {user.name ? user.name.charAt(0).toUpperCase() : "G"}
           </Avatar>
           <Typography>
-            <b>My Profile</b>
+            <b>My Setting</b>
           </Typography>
-          <Box sx={{ textAlign: "left", mt: 3 }}>
-            <Typography variant="body1" sx={{ mb: 1 }}>
-              <b>Name:</b> {user.name || "-"}
-            </Typography>
-            <Typography variant="body1" sx={{ mb: 1 }}>
-              <b>DOB:</b> {user.dob || "-"}
-            </Typography>
-            <Typography variant="body1" sx={{ mb: 1 }}>
-              <b>Mobile:</b> {user.mobile || "-"}
-            </Typography>
-            <Typography variant="body1" sx={{ mb: 2 }}>
-              <b>Email:</b> {user.email || "-"}
-            </Typography>
-          </Box>
           <Button
             sx={buttonStyle}
             variant="contained"
@@ -62,7 +48,7 @@ const ProfilePage: React.FC = () => {
   );
 };
 
-export default ProfilePage;
+export default SettingPage;
 
 interface User {
   _id?: string | null;

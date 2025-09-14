@@ -3,8 +3,9 @@ import DashboardPage from "./page/users/DashboardPage";
 import ToDoPage from "./page/todo/TodoPage";
 import RegisterPage from "./page/auth/RegisterPage";
 import LoginPage from "./page/auth/LoginPage";
-import LoginSuccessPage from "./page/auth/LoginSuccessPage";
 import ProfilePage from "./page/users/ProfilePage";
+import ResetPage from "./page/auth/ResetPage";
+import SettingPage from "./page/users/SettingPage";
 
 function App() {
   return (
@@ -13,10 +14,11 @@ function App() {
         <Routes>
           <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/setting" element={<SettingPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/" element={<LoginPage />} />
           <Route path="/login" element={<LoginPage />} />
-          <Route path="/login-success" element={<LoginSuccessPage />} />
+          <Route path="/reset-pass" element={<ResetPage />} />
           <Route path="/todo" element={<ToDoPage />} />
         </Routes>
       </BrowserRouter>

@@ -2,7 +2,8 @@ import axios, { AxiosError, type Method } from "axios";
 
 const API = "http://localhost:5000/api";
 
-export interface RegisterData {
+export interface User {
+  _id: string;
   name: string;
   dob: string;
   mobile: string;
@@ -11,10 +12,11 @@ export interface RegisterData {
   confirm_password: string;
 }
 
-export interface LoginData {
-  email: string;
-  password: string;
-}
+export type RegisterData = Omit<User, "_id">;
+
+export type LoginData = Pick<User, "email" | "password">;
+
+export type UserData = Omit<User, "password" | "confirm_password">;
 
 export interface ApiResponse<T = any> {
   success: boolean;
@@ -41,7 +43,7 @@ const api = async (pl: ApiType) => {
       },
     });
 
-    return res.data
+    return res.data;
   } catch (error) {
     const err = error as AxiosError<any>;
     console.log("API Error : ", { err });
@@ -65,6 +67,20 @@ export const loginUserService = async (
   return api({ url: `/auth/login`, method: "post", data });
 };
 
-export const userProfileService = (token: string): Promise<ApiResponse> => {
-  return api({ url: `/users`, method: "get", token });
+export const userProfileService = async () => {
+  const token = localStorage.getItem("token") as string;
+  const res = await api({ url: `/users`, method: "get", token });
+  if (res.success && res.data) {
+    localStorage.setItem("currentUser", JSON.stringify(res.data));
+  }
+};
+
+export const getUser = (): UserData | null => {
+  const user = localStorage.getItem("currentUser");
+  return user ? JSON.parse(user) : null;
+};
+
+export const isLoggedIn = () => {
+  const t = localStorage.getItem("token");
+  return t ? true : false;
 };

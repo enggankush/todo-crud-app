@@ -5,12 +5,20 @@ import AuthCard from "../../components/card/AuthCard";
 import CustomTextField from "../../components/input-field/CustomTextField";
 import CustomButton from "../../components/button/CustomButton";
 import CustomAlert from "../../components/common/CustomAlert";
-import { Link, useNavigate } from "react-router-dom";
-import { loginUserService, type ApiResponse } from "../../api/api.service";
+import { Link, Navigate, useNavigate } from "react-router-dom";
+import {
+  isLoggedIn,
+  loginUserService,
+  userProfileService,
+  type ApiResponse,
+} from "../../api/api.service";
 import type { AlertColor } from "@mui/material";
 import { validation } from "../../utils/validation";
 
 const LoginPage = () => {
+  if (isLoggedIn()) {
+    return <Navigate to="/dashboard" />;
+  }
   const navigate = useNavigate();
 
   const initialValue: LoginForm = { email: "", password: "" };
@@ -40,7 +48,6 @@ const LoginPage = () => {
     e.preventDefault();
 
     const errors = validation(formData, "login") as ValidationErrors;
-    console.log(errors);
     setServermessage("");
     if (Object.keys(errors).length === 0) {
       try {
@@ -48,6 +55,7 @@ const LoginPage = () => {
 
         if (result.success) {
           localStorage.setItem("token", result.data);
+          userProfileService();
 
           setSeverity("success");
           setAlertMsg(result.msg || "Sign In successful");
@@ -55,7 +63,7 @@ const LoginPage = () => {
           setFormData(initialValue);
 
           setTimeout(() => {
-            navigate("/login-success");
+            navigate("/dashboard");
           }, 2000);
         } else {
           setSeverity("error");
@@ -69,11 +77,7 @@ const LoginPage = () => {
       }
     } else {
       setSeverity("error");
-      setAlertMsg(
-        servermessage ||
-        errors.email ||
-        errors.password
-      );
+      setAlertMsg(servermessage || errors.email || errors.password);
       setOpenAlert(true);
     }
   };
@@ -112,11 +116,6 @@ const LoginPage = () => {
           <Link style={{ color: "#ddd" }} to="/register">
             Don't have an account? Sign up
           </Link>
-          <p>
-            <Link style={{ color: "#ddd" }} to="/reset">
-              Forgot Password?
-            </Link>
-          </p>
         </AuthCard>
       </CustomBox>
     </>
@@ -133,3 +132,11 @@ interface LoginForm {
   email: string;
   password: string;
 }
+
+// interface User {
+//   name: string;
+//   dob: string;
+//   mobile: string;
+//   email: string;
+//   password: string;
+// }

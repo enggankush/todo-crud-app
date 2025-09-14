@@ -33,15 +33,14 @@ const Header: React.FC = () => {
   };
 
   // ✅ Navigation handlers
-  const goToProfile = () => {
-    handleCloseMenu();
-    navigate("/profile");
-  };
 
-  const logoutProfile = () => {
+  const navigation = (path: string) => {
     handleCloseMenu();
-    localStorage.removeItem("currentUser"); // ✅ clear login if needed
-    navigate("/login");
+    if (path === "/login") {
+      localStorage.removeItem("token");
+      localStorage.removeItem("currentUser");
+    }
+    navigate(path);
   };
 
   return (
@@ -65,15 +64,24 @@ const Header: React.FC = () => {
             open={Boolean(anchorEl)}
             onClose={handleCloseMenu}
           >
-            <MenuItem sx={{ color: "#666666" }} onClick={goToProfile}>
+            <MenuItem
+              sx={{ color: "#666666" }}
+              onClick={() => navigation("/profile")}
+            >
               Profile
             </MenuItem>
             <hr />
-            <MenuItem sx={{ color: "#666666" }} onClick={handleCloseMenu}>
+            <MenuItem
+              sx={{ color: "#666666" }}
+              onClick={() => navigation("/setting")}
+            >
               Settings
             </MenuItem>
             <hr />
-            <MenuItem sx={{ color: "#666666" }} onClick={logoutProfile}>
+            <MenuItem
+              sx={{ color: "#666666" }}
+              onClick={() => navigation("/login")}
+            >
               Logout
             </MenuItem>
           </Menu>

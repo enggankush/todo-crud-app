@@ -10,12 +10,15 @@ import CustomTextField from "../../components/input-field/CustomTextField";
 import CustomButton from "../../components/button/CustomButton";
 import AuthCard from "../../components/card/AuthCard";
 import CustomAlert from "../../components/common/CustomAlert";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import CustomBox from "../../components/box/CustomBox";
-import { registerUserService } from "../../api/api.service";
+import { isLoggedIn, registerUserService } from "../../api/api.service";
 import { validation } from "../../utils/validation";
 
 const RegisterPage: React.FC = () => {
+  if (isLoggedIn()) {
+    return <Navigate to="/dashboard" />;
+  }
   const navigate = useNavigate();
   const initialvalue: RegisterForm = {
     name: "",
@@ -55,11 +58,9 @@ const RegisterPage: React.FC = () => {
     if (Object.keys(errors).length === 0) {
       try {
         const result: ApiResponse = await registerUserService(formData);
-        console.log("data: ", result);
 
         if (result.success) {
           setSeverity("success");
-          console.log("Register is Successful", formData);
           setAlertMsg(result.msg || "Sign Up successful");
           setOpenAlert(true);
           setFormData(initialvalue);
@@ -185,6 +186,6 @@ interface ValidationErrors {
 }
 
 interface ApiResponse {
-  status: boolean;
+  success: boolean;
   msg?: string;
 }
