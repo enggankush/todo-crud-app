@@ -1,7 +1,6 @@
 import {
   AppBar,
   Avatar,
-  Box,
   IconButton,
   Menu,
   MenuItem,
@@ -9,7 +8,7 @@ import {
   Typography,
 } from "@mui/material";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 
 interface User {
   name: string;
@@ -32,8 +31,6 @@ const Header: React.FC = () => {
     setAnchorEl(null);
   };
 
-  // ✅ Navigation handlers
-
   const navigation = (path: string) => {
     handleCloseMenu();
     if (path === "/login") {
@@ -44,51 +41,94 @@ const Header: React.FC = () => {
   };
 
   return (
-    <Box>
-      <AppBar position="static" sx={{ backgroundColor: "rgb(255 255 255)" }}>
-        <Toolbar sx={{ color: "#666666" }}>
-          <Typography variant="h6" sx={{ flexGrow: 1 }}>
-            My To-Do
-          </Typography>
+    <AppBar position="static" sx={headerStyle}>
+      <Toolbar sx={{ color: "#666666" }}>
+        <Typography variant="h6" sx={{ flexGrow: 1 }}>
+          Dashboard
+        </Typography>
 
-          {/* Profile Avatar */}
-          <IconButton onClick={handleOpenMenu} size="large">
-            <Avatar sx={{ bgcolor: "orange" }}>
-              {user?.name ? user.name.charAt(0).toUpperCase() : "G"}
-            </Avatar>
-          </IconButton>
+        {/* Profile Avatar */}
+        <IconButton onClick={handleOpenMenu} size="large">
+          <Avatar sx={{ bgcolor: "orange" }}>
+            {user?.name ? user.name.charAt(0).toUpperCase() : "G"}
+          </Avatar>
+        </IconButton>
 
-          {/* Menu */}
-          <Menu
-            anchorEl={anchorEl}
-            open={Boolean(anchorEl)}
-            onClose={handleCloseMenu}
+        {/* Menu */}
+        <Menu
+          anchorEl={anchorEl}
+          open={Boolean(anchorEl)}
+          onClose={handleCloseMenu}
+        >
+          <MenuItem
+            component={NavLink}
+            to="/profile"
+            onClick={handleCloseMenu}
+            sx={menuItemStyle}
           >
-            <MenuItem
-              sx={{ color: "#666666" }}
-              onClick={() => navigation("/profile")}
-            >
-              Profile
-            </MenuItem>
-            <hr />
-            <MenuItem
-              sx={{ color: "#666666" }}
-              onClick={() => navigation("/setting")}
-            >
-              Settings
-            </MenuItem>
-            <hr />
-            <MenuItem
-              sx={{ color: "#666666" }}
-              onClick={() => navigation("/login")}
-            >
-              Logout
-            </MenuItem>
-          </Menu>
-        </Toolbar>
-      </AppBar>
-    </Box>
+            Profile
+          </MenuItem>
+          {/* <hr /> */}
+          <MenuItem
+            component={NavLink}
+            to="/todo"
+            onClick={handleCloseMenu}
+            sx={menuItemStyle}
+          >
+            My to-do
+          </MenuItem>
+          {/* <hr /> */}
+          <MenuItem
+            component={NavLink}
+            to="/setting"
+            onClick={handleCloseMenu}
+            sx={menuItemStyle}
+          >
+            Settings
+          </MenuItem>
+          {/* <hr /> */}
+          <MenuItem
+            onClick={() => {
+              navigation("/login");
+            }}
+            sx={{
+              color: "#d32f2f",
+              "&:hover": {
+                backgroundColor: "#fdecea",
+                color: "#d32f2f",
+              },
+            }}
+          >
+            Logout
+          </MenuItem>
+        </Menu>
+      </Toolbar>
+    </AppBar>
   );
 };
 
 export default Header;
+const headerStyle = {
+  position: "fixed",
+  top: " 0",
+  left: " 0",
+  width: " 100%",
+  height: " 60px",
+  boxShadow: " 0 2px 5px rgba(0, 0, 0, 0.1)",
+  backgroundColor: "rgb(255 255 255)",
+};
+
+const menuItemStyle = {
+  color: "#666",
+  "&:hover": {
+    backgroundColor: "#e3f2fd",
+    color: "#1976d2",
+  },
+  "&.active": {
+    color: "#1976d2",
+    fontWeight: "bold",
+  },
+  "&.active:hover": {
+    backgroundColor: "#bbdefb",
+  },
+};

@@ -52,10 +52,6 @@ const ProfilePage: React.FC = () => {
     setFormData(user);
   };
 
-  // const handleButton = () =>{
-
-  // }
-
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {

@@ -12,9 +12,9 @@ export interface User {
   confirm_password: string;
 }
 
-export type RegisterData = Omit<User, "_id">;
+export type RegisterData = Omit<User, "_id">; // Remove from User
 
-export type LoginData = Pick<User, "email" | "password">;
+export type LoginData = Pick<User, "email" | "password">; // Only keep from User
 
 export type UserData = Omit<User, "password" | "confirm_password">;
 

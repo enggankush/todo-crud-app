@@ -2,6 +2,7 @@ import { Box, Button, TextField, Checkbox } from "@mui/material";
 import { EditOutlined, DeleteOutlineOutlined } from "@mui/icons-material";
 import AuthCard from "../../components/card/AuthCard";
 import { useState, type ChangeEvent, type FormEvent } from "react";
+import Header from "../../components/nav/Header";
 
 const ToDoPage: React.FC = () => {
   const [inputValue, setInputValue] = useState<string>("");
@@ -50,59 +51,62 @@ const ToDoPage: React.FC = () => {
   };
 
   return (
-    <Box sx={todo_header}>
-      <AuthCard title="My To-do List">
-        <form onSubmit={handleSubmit}>
-          <TextField
-            sx={todo_input}
-            type="text"
-            required
-            autoFocus
-            placeholder="My Task"
-            value={inputValue}
-            onChange={handleChange}
-          />
-          <Button sx={todo_button} type="submit">
-            {editValue !== null ? "Update Item" : "Add Item"}
-          </Button>
-        </form>
+    <Box>
+      <Header />
+      <Box sx={todo_header}>
+        <AuthCard title="My To-do List">
+          <form onSubmit={handleSubmit}>
+            <TextField
+              sx={todo_input}
+              type="text"
+              required
+              autoFocus
+              placeholder="My Task"
+              value={inputValue}
+              onChange={handleChange}
+            />
+            <Button sx={todo_button} type="submit">
+              {editValue !== null ? "Update Item" : "Add Item"}
+            </Button>
+          </form>
 
-        <ol style={{ paddingLeft: 0 }}>
-          {value.map((CurrentValue, index) => (
-            <Box key={index} component="li" sx={todo_list}>
-              <Box
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  flex: 1,
-                  minWidth: 0,
-                }}
-              >
-                <Checkbox
-                  checked={checkedItems[index] || false}
-                  onChange={() => handleCheck(index)}
+          <ol style={{ paddingLeft: 0 }}>
+            {value.map((CurrentValue, index) => (
+              <Box key={index} component="li" sx={todo_list}>
+                <Box
                   sx={{
-                    padding: 0,
-                    marginRight: "10px",
-                    color: "#fff",
+                    display: "flex",
+                    alignItems: "center",
+                    flex: 1,
+                    minWidth: 0,
                   }}
-                />
-                <span style={span_item(index, checkedItems)}>
-                  {CurrentValue}
-                </span>
+                >
+                  <Checkbox
+                    checked={checkedItems[index] || false}
+                    onChange={() => handleCheck(index)}
+                    sx={{
+                      padding: 0,
+                      marginRight: "10px",
+                      color: "#fff",
+                    }}
+                  />
+                  <span style={span_item(index, checkedItems)}>
+                    {CurrentValue}
+                  </span>
+                </Box>
+                <Box>
+                  <Button onClick={() => handleEdit(index)} type="button">
+                    <EditOutlined sx={{ color: "#00b0ff" }} />
+                  </Button>
+                  <Button onClick={() => handleDelete(index)} type="button">
+                    <DeleteOutlineOutlined sx={{ color: "#ff5252" }} />
+                  </Button>
+                </Box>
               </Box>
-              <Box>
-                <Button onClick={() => handleEdit(index)} type="button">
-                  <EditOutlined sx={{ color: "#00b0ff" }} />
-                </Button>
-                <Button onClick={() => handleDelete(index)} type="button">
-                  <DeleteOutlineOutlined sx={{ color: "#ff5252" }} />
-                </Button>
-              </Box>
-            </Box>
-          ))}
-        </ol>
-      </AuthCard>
+            ))}
+          </ol>
+        </AuthCard>
+      </Box>
     </Box>
   );
 };
@@ -113,7 +117,7 @@ const todo_header = {
   display: "flex",
   justifyContent: "center",
   alignItems: "center",
-  paddingTop: 4,
+  paddingTop: 14,
 };
 
 const todo_input = {

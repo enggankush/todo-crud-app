@@ -6,6 +6,7 @@ import LoginPage from "./page/auth/LoginPage";
 import ProfilePage from "./page/users/ProfilePage";
 import ResetPage from "./page/auth/ResetPage";
 import SettingPage from "./page/users/SettingPage";
+import UserPost from "./page/users/UserPost";
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/dashboard" element={<DashboardPage />} />
+          <Route path="/post" element={<UserPost />} />
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/setting" element={<SettingPage />} />
           <Route path="/register" element={<RegisterPage />} />
